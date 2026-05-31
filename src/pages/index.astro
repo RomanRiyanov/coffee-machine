@@ -1,0 +1,325 @@
+---
+import Layout from '../layouts/Layout.astro';
+import HeroScroll from '../components/HeroScroll.astro';
+import { business } from '../data/business';
+// Пример оптимизации картинок Astro (раскомментируй, положив файл в src/assets):
+// import { Image } from 'astro:assets';
+// import workshop from '../assets/workshop.jpg';
+
+const businessId = `${business.url}/#business`;
+
+// --- Schema.org ---
+const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  '@id': businessId,
+  name: business.name,
+  description: business.description,
+  url: business.url,
+  telephone: business.phone,
+  image: new URL('/og-image.jpg', business.url).href,
+  areaServed: business.areaServed,
+  sameAs: [business.telegram],
+};
+
+const servicesSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  itemListElement: business.services.map((s, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    item: {
+      '@type': 'Service',
+      name: s.title,
+      description: s.description,
+      provider: { '@id': businessId },
+      areaServed: business.areaServed,
+    },
+  })),
+};
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: business.faq.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+
+const pageTitle = `${business.name} — ремонт кофемашин в Москве`;
+---
+
+<Layout title={pageTitle} description={business.description} path="/">
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(localBusinessSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(servicesSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  </Fragment>
+
+  <header>
+    <HeroScroll frameCount={103} />
+  </header>
+
+  <main>
+    <!-- Услуги -->
+    <section id="services" class="section section--services" aria-labelledby="services-title">
+      <div class="section__inner">
+        <p class="section__eyebrow">Услуги</p>
+        <h2 id="services-title" class="section__title">Что мы ремонтируем</h2>
+
+        <ul class="services">
+          {
+            business.services.map((s) => (
+              <li class="services__card">
+                <h3 class="services__name">{s.title}</h3>
+                <p class="services__desc">{s.description}</p>
+                {s.price && <span class="services__price">{s.price}</span>}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- Процесс -->
+    <section id="process" class="section section--process" aria-labelledby="process-title">
+      <div class="section__inner">
+        <p class="section__eyebrow">Как это работает</p>
+        <h2 id="process-title" class="section__title">Четыре шага до рабочей кофемашины</h2>
+
+        <ol class="process">
+          {
+            business.process.map((p) => (
+              <li class="process__item">
+                <span class="process__step">{p.step}</span>
+                <h3 class="process__name">{p.title}</h3>
+                <p class="process__text">{p.text}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="section section--faq" aria-labelledby="faq-title">
+      <div class="section__inner">
+        <p class="section__eyebrow">Вопросы</p>
+        <h2 id="faq-title" class="section__title">Частые вопросы</h2>
+
+        <div class="faq">
+          {
+            business.faq.map((f) => (
+              <details class="faq__item">
+                <summary class="faq__q">
+                  <h3>{f.q}</h3>
+                </summary>
+                <p class="faq__a">{f.a}</p>
+              </details>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA / контакты -->
+    <section id="contact" class="section section--contact" aria-labelledby="contact-title">
+      <div class="section__inner section__inner--center">
+        <h2 id="contact-title" class="section__title">Опишите проблему — поможем</h2>
+        <p class="section__lead">{business.areaServed}</p>
+        <div class="contact__btns">
+          <a class="btn btn--primary" href={`tel:${business.phoneHref}`}>
+            Позвонить · {business.phone}
+          </a>
+          <a class="btn btn--ghost" href={business.telegram} target="_blank" rel="noopener">
+            Telegram {business.telegramHandle}
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+</Layout>
+
+<style lang="scss">
+  @use '../styles/variables' as *;
+  @use '../styles/mixins' as *;
+
+  .section {
+    padding-block: $space-2xl;
+
+    @include respond-to(md) {
+      padding-block: $space-3xl;
+    }
+
+    &--process {
+      background-color: $color-surface;
+    }
+  }
+
+  .section__inner {
+    @include container;
+
+    &--center {
+      text-align: center;
+    }
+  }
+
+  .section__eyebrow {
+    @include tech-label;
+    margin-bottom: $space-xs;
+  }
+
+  .section__title {
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    margin-bottom: $space-xl;
+    max-width: 20ch;
+
+    .section__inner--center & {
+      margin-inline: auto;
+    }
+  }
+
+  .section__lead {
+    color: $color-text-muted;
+    margin-bottom: $space-lg;
+  }
+
+  // --- Услуги ---
+  .services {
+    display: grid;
+    gap: $space-md;
+    grid-template-columns: 1fr;
+
+    @include respond-to(md) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @include respond-to(lg) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .services__card {
+    padding: $space-lg;
+    background-color: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius;
+    transition:
+      border-color $transition,
+      transform $transition;
+
+    &:hover {
+      border-color: $color-accent;
+      transform: translateY(-3px);
+    }
+
+    @include reduced-motion {
+      &:hover {
+        transform: none;
+      }
+    }
+  }
+
+  .services__name {
+    font-size: 1.15rem;
+    margin-bottom: $space-xs;
+  }
+  .services__desc {
+    color: $color-text-muted;
+    font-size: 0.95rem;
+    margin-bottom: $space-md;
+  }
+  .services__price {
+    @include tech-label;
+  }
+
+  // --- Процесс ---
+  .process {
+    display: grid;
+    gap: $space-lg;
+    grid-template-columns: 1fr;
+
+    @include respond-to(md) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @include respond-to(lg) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .process__step {
+    font-family: $font-mono;
+    font-size: 2rem;
+    color: $color-accent;
+    display: block;
+    margin-bottom: $space-xs;
+  }
+
+  .process__name {
+    font-size: 1.1rem;
+    margin-bottom: $space-2xs;
+  }
+  .process__text {
+    color: $color-text-muted;
+    font-size: 0.95rem;
+  }
+
+  // --- FAQ ---
+  .faq {
+    max-width: 760px;
+  }
+
+  .faq__item {
+    border-bottom: 1px solid $color-border;
+
+    &[open] .faq__q::after {
+      transform: rotate(45deg);
+    }
+  }
+
+  .faq__q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-md;
+    padding-block: $space-md;
+    cursor: pointer;
+    list-style: none;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      font-family: $font-body;
+      font-weight: 600;
+    }
+
+    &::after {
+      content: '+';
+      font-size: 1.5rem;
+      color: $color-accent;
+      transition: transform $transition;
+      flex-shrink: 0;
+    }
+  }
+
+  .faq__a {
+    color: $color-text-muted;
+    padding-bottom: $space-md;
+    max-width: 60ch;
+  }
+
+  // --- Контакты ---
+  .contact__btns {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: $space-sm;
+    margin-top: $space-md;
+  }
+
+</style>

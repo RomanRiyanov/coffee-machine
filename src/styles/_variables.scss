@@ -1,0 +1,36 @@
+// --- Палитра: индустриальный / технологичный ---
+$color-bg: #0e1116;
+$color-surface: #161b22;
+$color-surface-alt: #1c232c;
+$color-border: #2a313b;
+$color-text: #e6e9ed;
+$color-text-muted: #9aa4b2;
+$color-accent: #ff6a1a; // горячий оранжевый
+$color-accent-dark: #d9540c;
+$color-steel: #5b7a99;
+
+// --- Типографика ---
+$font-heading: 'Chakra Petch', 'Segoe UI', system-ui, sans-serif;
+$font-body: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+$font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+
+// --- Отступы ---
+$space-2xs: 0.25rem;
+$space-xs: 0.5rem;
+$space-sm: 0.75rem;
+$space-md: 1rem;
+$space-lg: 1.5rem;
+$space-xl: 2.5rem;
+$space-2xl: 4rem;
+$space-3xl: 6rem;
+
+// --- Брейкпоинты (mobile-first) ---
+$bp-sm: 375px;
+$bp-md: 768px;
+$bp-lg: 1280px;
+
+// --- Раскладка ---
+$container-max: 1200px;
+$radius: 12px;
+$radius-sm: 8px;
+$transition: 200ms ease;

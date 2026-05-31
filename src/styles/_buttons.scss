@@ -1,0 +1,40 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.55rem 1rem;
+  font-size: 0.875rem;
+  border-radius: $radius-sm;
+  font-weight: 600;
+  transition:
+    transform $transition,
+    background-color $transition,
+    border-color $transition;
+
+  &--primary {
+    background-color: $color-accent;
+    color: #fff;
+
+    &:hover {
+      background-color: $color-accent-dark;
+      transform: translateY(-2px);
+    }
+  }
+
+  &--ghost {
+    border: 1px solid $color-border;
+    color: $color-text;
+
+    &:hover {
+      border-color: $color-accent;
+    }
+  }
+
+  @include reduced-motion {
+    &:hover {
+      transform: none;
+    }
+  }
+}
