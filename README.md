@@ -35,36 +35,6 @@ npm run preview  # предпросмотр прод-сборки
 npm run check    # проверка типов
 ```
 
-## Что подогнать под себя
-
-1. **Кадры.** В `src/pages/index.astro` у компонента `<HeroScroll frameCount={120} />`
-   поставьте реальное число кадров. Если имена файлов отличаются от
-   `frame_0001.webp` (например `0001.png` или без нуля), поправьте функцию
-   `framePath` в `src/components/HeroScroll.astro`:
-   ```ts
-   framePath: (i) => `/frames/${String(i + 1).padStart(4, '0')}.png`,
-   ```
-   «Длина» прокрутки анимации задаётся высотой секции `.hero { height: 320vh; }`
-   там же — больше высота, медленнее проигрыш.
-
-2. **Контент и SEO.** Всё в одном файле `src/data/business.ts`: название, телефон,
-   адрес, гео, услуги, шаги, FAQ, соцсети. Оттуда же берутся данные для JSON-LD
-   (LocalBusiness, Service, FAQPage).
-
-3. **Домен.** Укажите реальный `site` в `astro.config.mjs` — от него зависят
-   canonical и og:url.
-
-4. **og-image.** Положите `public/og-image.jpg` (рекомендуемо 1200×630) для
-   корректных превью в соцсетях.
-
-## Возможные доработки (по желанию)
-
-- `@astrojs/sitemap` + ссылка в `robots.txt` — автогенерация карты сайта.
-- Self-host шрифтов через `@fontsource/chakra-petch`, `@fontsource/ibm-plex-sans`,
-  `@fontsource/ibm-plex-mono` вместо Google Fonts — плюс к Lighthouse.
-- Sticky-текст, меняющийся по ходу кадров анимации.
-- Форма заявки (как Astro-остров на Vue, если понадобится реактивность).
-
 ## Структура
 
 ```
